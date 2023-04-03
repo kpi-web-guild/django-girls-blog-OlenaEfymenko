@@ -1,3 +1,5 @@
+[![🧪 CI/CD](https://github.com/kpi-web-guild/OlenaEfymenko/actions/workflows/ci.yml/badge.svg)](https://github.com/kpi-web-guild/django-girls-blog-OlenaEfymenko/actions/workflows/ci.yml?query=branch%3Amain)
+
 ## **Introduction**
 
 Educational project within IT KPI Python mentorship program by @webknjaz.
