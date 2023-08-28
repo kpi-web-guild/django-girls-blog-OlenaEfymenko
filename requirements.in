@@ -1,0 +1,8 @@
+Django
+python-decouple
+djangorestframework
+sentry-sdk[django]
+django-q
+easy-thumbnails
+django-import-export
+django-compressor
