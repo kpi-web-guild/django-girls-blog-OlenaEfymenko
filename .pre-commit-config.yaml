@@ -47,3 +47,12 @@ repos:
     rev: 3.9.2
     hooks:
       - id: flake8
+  - repo: https://github.com/adrienverge/yamllint.git
+  rev: v1.32.0
+  hooks:
+  - id: yamllint
+    types:
+    - file
+    - yaml
+    args:
+    - --strict
