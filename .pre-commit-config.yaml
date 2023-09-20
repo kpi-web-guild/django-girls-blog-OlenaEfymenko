@@ -60,8 +60,5 @@ repos:
   rev: v1.32.0
   hooks:
   - id: yamllint
-    types:
-    - file
-    - yaml
     args:
     - --strict
