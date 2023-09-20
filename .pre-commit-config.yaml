@@ -39,17 +39,14 @@ repos:
   - id: pydocstyle
     exclude: ^tests/.*
 
-- repo: https://github.com/PyCQA/pylint
-  rev: v2.16.3
+- repo: local
   hooks:
   - id: pylint
-    args:
-    - --jobs=0
-    - --rcfile=.pylintrc
-    - --output-format=colorized
-    - --score=n
-    - --enable=local
-    - --disable=C0330,R0913,R0914
+    name: pylint
+    entry: pylint
+    language: system
+    types: [python]
+    require_serial: true
 
 - repo: https://github.com/PyCQA/flake8
   rev: 3.9.2
