@@ -1,49 +1,64 @@
+---
+
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-      - id: check-yaml
-      - id: check-xml
-      - id: check-added-large-files
-      - id: no-commit-to-branch
-      - id: check-merge-conflict
-      - id: double-quote-string-fixer
-      - id: requirements-txt-fixer
-      - id: check-docstring-first
-      - id: name-tests-test
-      - id: check-ast
-      - id: debug-statements
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.1
-    hooks:
-      - id: mypy
-  - repo: https://github.com/asottile/add-trailing-comma
-    rev: v2.4.0
-    hooks:
-      - id: add-trailing-comma
-  - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.4.2
-    hooks:
-      - id: remove-tabs
-  - repo: https://github.com/pycqa/pydocstyle
-    rev: 6.3.0
-    hooks:
-      - id: pydocstyle
-        exclude: ^tests/.*
-  - repo: https://github.com/PyCQA/pylint
-    rev: v2.16.3
-    hooks:
-      - id: pylint
-        args:
-          - --jobs=0
-          - --rcfile=.pylintrc
-          - --output-format=colorized
-          - --score=n
-          - --enable=local
-          - --disable=C0330,R0913,R0914
-  - repo: https://github.com/PyCQA/flake8
-    rev: 3.9.2
-    hooks:
-      - id: flake8
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+  - id: check-yaml
+  - id: check-xml
+  - id: check-added-large-files
+  - id: no-commit-to-branch
+  - id: check-merge-conflict
+  - id: double-quote-string-fixer
+  - id: requirements-txt-fixer
+  - id: check-docstring-first
+  - id: name-tests-test
+  - id: check-ast
+  - id: debug-statements
+
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.0.1
+  hooks:
+  - id: mypy
+
+- repo: https://github.com/asottile/add-trailing-comma
+  rev: v2.4.0
+  hooks:
+  - id: add-trailing-comma
+
+- repo: https://github.com/Lucas-C/pre-commit-hooks
+  rev: v1.4.2
+  hooks:
+  - id: remove-tabs
+
+- repo: https://github.com/pycqa/pydocstyle
+  rev: 6.3.0
+  hooks:
+  - id: pydocstyle
+    exclude: ^tests/.*
+
+- repo: https://github.com/PyCQA/pylint
+  rev: v2.16.3
+  hooks:
+  - id: pylint
+    args:
+    - --jobs=0
+    - --rcfile=.pylintrc
+    - --output-format=colorized
+    - --score=n
+    - --enable=local
+    - --disable=C0330,R0913,R0914
+
+- repo: https://github.com/PyCQA/flake8
+  rev: 3.9.2
+  hooks:
+  - id: flake8
+
+- repo: https://github.com/adrienverge/yamllint.git
+  rev: v1.32.0
+  hooks:
+  - id: yamllint
+    args:
+    - --strict
