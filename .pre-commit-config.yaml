@@ -52,7 +52,7 @@ repos:
     - --disable=C0330,R0913,R0914
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 3.9.2
+  rev: 6.1.0
   hooks:
   - id: flake8
 
