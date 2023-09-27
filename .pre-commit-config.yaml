@@ -43,13 +43,6 @@ repos:
   rev: v2.16.3
   hooks:
   - id: pylint
-    args:
-    - --jobs=0
-    - --rcfile=.pylintrc
-    - --output-format=colorized
-    - --score=n
-    - --enable=local
-    - --disable=C0330,R0913,R0914
 
 - repo: https://github.com/PyCQA/flake8
   rev: 6.1.0
