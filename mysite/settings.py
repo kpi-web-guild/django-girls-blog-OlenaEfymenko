@@ -13,6 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# pylint: disable=line-too-long
 SECRET_KEY = 'django-insecure-aw5fc9z9v%^t$ur*-s6h2@g=_1hh--&m5-6sp!1#99p9@l_^$s'  # noqa: E501
 
 # SECURITY WARNING: don't run with debug turned on in production!
