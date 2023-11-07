@@ -1,0 +1,4 @@
+[flake8]
+
+# Let's not overcomplicate the code:
+max-complexity = 10
