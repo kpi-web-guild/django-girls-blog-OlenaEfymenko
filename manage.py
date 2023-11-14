@@ -2,8 +2,45 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from contextlib import contextmanager, nullcontext, suppress
+
+with suppress(ImportError):
+    from coverage import Coverage
 
 
+@contextmanager
+def coverage_context():
+    """Context manager to collect code coverage data.
+
+    Uses coverage package to collect coverage, generate reports
+    and print coverage percentage.
+    """
+    cov = Coverage()
+    cov.erase()
+    with cov.collect():
+        yield
+    cov.save()
+    print(f'Coverage is {cov.report()}%')
+    cov.html_report()
+    cov.xml_report()
+
+
+@contextmanager
+def maybe_measure_coverage():
+    """Check if command is 'test' and only then collect coverage."""
+    try:
+        command = sys.argv[1]
+    except IndexError:
+        command = 'help'
+
+    running_tests = command == 'test'
+
+    ctx = nullcontext() if not running_tests else coverage_context()
+    with ctx:
+        yield
+
+
+@maybe_measure_coverage()
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
