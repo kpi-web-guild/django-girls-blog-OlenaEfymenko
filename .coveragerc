@@ -1,0 +1,25 @@
+[html]
+show_contexts = true
+skip_covered = false
+
+[report]
+skip_covered = true
+show_missing = true
+exclude_also =
+  \#.*no cover
+  \s*raise AssertionError\b
+  \s*raise NotImplementedError\b
+  \s*return NotImplemented\b
+  \s*raise$
+  if __name__ == ['"]__main__['"]:$
+
+[run]
+branch = true
+cover_pylib = false
+dynamic_context = test_function
+parallel = true
+relative_files = true
+source =
+  tests
+source_pkgs =
+  mysite
