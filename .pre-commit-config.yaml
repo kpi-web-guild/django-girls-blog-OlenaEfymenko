@@ -46,6 +46,7 @@ repos:
     args:
     - --django-settings-module=mysite.settings
     additional_dependencies:
+    - coverage
     - pylint_django[with_django] >= 2.5.3
 
 - repo: https://github.com/PyCQA/flake8
