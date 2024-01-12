@@ -1,4 +1,7 @@
 [flake8]
+# Don't even try to analyze these:
+extend-exclude =
+  blog/migrations/*,
 
 # Let's not overcomplicate the code:
 max-complexity = 10

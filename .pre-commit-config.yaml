@@ -37,7 +37,9 @@ repos:
   rev: 6.3.0
   hooks:
   - id: pydocstyle
-    exclude: ^tests/.*
+    exclude: >-
+      (?x)
+      .*/migrations/.*
 
 - repo: https://github.com/PyCQA/pylint
   rev: v2.16.3
