@@ -1,1 +1,1 @@
-"""The Blog application package."""
+"""The Blog application."""
