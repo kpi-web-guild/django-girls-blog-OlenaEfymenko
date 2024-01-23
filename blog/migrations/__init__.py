@@ -1,1 +1,1 @@
-"""The database migrations package"""
+"""The database migrations."""
