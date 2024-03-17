@@ -68,3 +68,21 @@ class ViewsTest(TestCase):
                 )
                 self.assertEqual(200, http_response.status_code)
                 self.assertTemplateUsed(http_response, 'blog/post_list.html')
+
+    def test_post_detail_successful(self):
+        """Ensure an existing post is found by ID."""
+        post = Post.objects.create(
+            author=self.user, title='test title', text='test text',
+        )
+        http_response = self.client.get(
+            reverse('post_detail', kwargs={'pk': post.pk}),
+        )
+        self.assertEqual(200, http_response.status_code)
+        self.assertTemplateUsed(http_response, 'blog/post_detail.html')
+
+    def test_post_detail_failed(self):
+        """Check that getting a non-existent post returns 404."""
+        http_response = self.client.get(
+            reverse('post_detail', kwargs={'pk': 31}),
+        )
+        self.assertEqual(404, http_response.status_code)
