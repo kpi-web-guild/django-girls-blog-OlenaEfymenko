@@ -86,3 +86,41 @@ class ViewsTest(TestCase):
             reverse('post_detail', kwargs={'pk': 31}),
         )
         self.assertEqual(404, http_response.status_code)
+
+    def test_create_new_post_authorized_user(self):
+        """Ensure the correct creation of the new post for authorized user."""
+        login_successful = self.client.login(
+            username='test username', password='test password',
+        )
+        self.assertTrue(login_successful)
+        get_response = self.client.get(reverse('post_new'))
+        self.assertEqual(200, get_response.status_code)
+        self.assertTemplateUsed(get_response, 'blog/post_edit.html')
+
+        form_post_data = {
+            'title': 'test title',
+            'text': 'test text',
+        }
+        post_response = self.client.post(
+            reverse('post_new'), form_post_data, follow=True,
+        )
+        self.assertEqual(200, post_response.status_code)
+        new_post = Post.objects.filter(
+            title='test title', text='test text',
+        ).first()
+        self.assertIsNotNone(new_post)
+
+        self.assertRedirects(
+            post_response, reverse(
+                'post_detail', kwargs={'pk': new_post.pk},
+            ),
+        )
+        self.assertTemplateUsed(get_response, 'blog/post_edit.html')
+
+    def test_create_new_post_unauthorized_user(self):
+        """Ensure the unauthorized user is redirected to the login page."""
+        response = self.client.get(reverse('post_new'))
+        self.assertEqual(302, response.status_code)
+        self.assertRedirects(
+            response, f'{reverse("login")}?next={reverse("post_new")}',
+        )
