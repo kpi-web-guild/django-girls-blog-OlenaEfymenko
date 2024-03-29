@@ -16,7 +16,10 @@ class ViewsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Create test client, user, posts with different published dates."""
-        cls.user = get_user_model().objects.create()
+        cls.user = get_user_model().objects.create_user(
+            username='test user',
+            password='test password',
+        )
         cls.client = Client()
         cls.tm_zone = timezone.get_current_timezone()
 
@@ -90,7 +93,7 @@ class ViewsTest(TestCase):
     def test_create_new_post_authorized_user(self):
         """Ensure the correct creation of the new post for authorized user."""
         login_successful = self.client.login(
-            username='test username', password='test password',
+            username='test user', password='test password',
         )
         self.assertTrue(login_successful)
         get_response = self.client.get(reverse('post_new'))
@@ -122,5 +125,5 @@ class ViewsTest(TestCase):
         response = self.client.get(reverse('post_new'))
         self.assertEqual(302, response.status_code)
         self.assertRedirects(
-            response, f'{reverse("login")}?next={reverse("post_new")}',
+            response, f'/accounts/login/?next={reverse("post_new")}',
         )
