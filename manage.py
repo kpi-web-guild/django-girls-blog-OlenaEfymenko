@@ -21,6 +21,12 @@ def coverage_context():
         yield
     cov.save()
     print(f'Coverage is {cov.report()}%')
+
+    covered = cov.report()
+    fail_under = cov.config.get_option('report:fail_under')
+    if covered < fail_under:
+        raise SystemExit(2)
+
     cov.html_report()
     cov.xml_report()
 
