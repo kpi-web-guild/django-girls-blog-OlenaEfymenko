@@ -5,6 +5,7 @@ skip_covered = false
 [report]
 skip_covered = true
 show_missing = true
+fail_under = 100
 exclude_also =
   \#.*no cover
   \s*raise AssertionError\b
@@ -22,4 +23,8 @@ relative_files = true
 source =
   tests
 source_pkgs =
+  blog
   mysite
+omit =
+    mysite/asgi.py
+    mysite/wsgi.py
