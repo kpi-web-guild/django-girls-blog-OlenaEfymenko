@@ -8,8 +8,12 @@ asgiref==3.7.2
     # via django
 astroid==3.0.2
     # via pylint
-coverage==7.3.4
+covdefaults==2.3.0
     # via -r requirements/dev.in
+coverage==7.3.4
+    # via
+    #   -r requirements/dev.in
+    #   covdefaults
 dill==0.3.7
     # via pylint
 django==3.2.23
