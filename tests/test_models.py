@@ -16,7 +16,7 @@ class TestPostModel(TestCase):
     """Tests for the Post model."""
 
     def setUp(self):
-        """"Create test User and Post objects."""
+        """Create test User and Post objects."""
         self.user = User.objects.create(username='test user')
         self.test_post = Post.objects.create(
             author=self.user,
