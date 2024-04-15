@@ -14,10 +14,13 @@ coverage==7.3.4
     # via
     #   -r requirements/dev.in
     #   covdefaults
+    #   django-coverage-plugin
 dill==0.3.7
     # via pylint
 django==3.2.23
     # via -r requirements/base.in
+django-coverage-plugin==3.1.0
+    # via -r requirements/dev.in
 isort==5.13.2
     # via pylint
 mccabe==0.7.0

@@ -9,6 +9,7 @@ parallel = true
 relative_files = true
 source =
   tests
+  blog/templates
 source_pkgs =
   blog
   mysite
@@ -17,3 +18,4 @@ omit =
     mysite/wsgi.py
 plugins =
   covdefaults
+  django_coverage_plugin
