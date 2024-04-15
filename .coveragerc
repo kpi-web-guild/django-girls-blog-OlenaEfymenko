@@ -2,20 +2,7 @@
 show_contexts = true
 skip_covered = false
 
-[report]
-skip_covered = true
-show_missing = true
-fail_under = 100
-exclude_also =
-  \#.*no cover
-  \s*raise AssertionError\b
-  \s*raise NotImplementedError\b
-  \s*return NotImplemented\b
-  \s*raise$
-  if __name__ == ['"]__main__['"]:$
-
 [run]
-branch = true
 cover_pylib = false
 dynamic_context = test_function
 parallel = true
@@ -28,3 +15,5 @@ source_pkgs =
 omit =
     mysite/asgi.py
     mysite/wsgi.py
+plugins =
+  covdefaults
