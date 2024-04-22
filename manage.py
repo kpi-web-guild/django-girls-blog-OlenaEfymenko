@@ -28,6 +28,10 @@ def coverage_context():
 
     fail_under = cov.config.get_option('report:fail_under')
     if covered < fail_under:
+        print(
+            'Erroring out because the coverage level is lower '
+            f'than the mandatory of {fail_under !s}%...',
+        )
         raise SystemExit(2)
 
 
