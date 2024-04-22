@@ -22,13 +22,13 @@ def coverage_context():
     cov.save()
     print(f'Coverage is {cov.report()}%')
 
+    cov.html_report()
+    cov.xml_report()
+
     covered = cov.report()
     fail_under = cov.config.get_option('report:fail_under')
     if covered < fail_under:
         raise SystemExit(2)
-
-    cov.html_report()
-    cov.xml_report()
 
 
 @contextmanager
