@@ -123,7 +123,6 @@ class ViewsTest(TestCase):
     def test_create_new_post_unauthorized_user(self):
         """Ensure the unauthorized user is redirected to the login page."""
         response = self.client.get(reverse('post_new'))
-        self.assertEqual(302, response.status_code)
         self.assertRedirects(
             response, f'/accounts/login/?next={reverse("post_new")}',
         )
