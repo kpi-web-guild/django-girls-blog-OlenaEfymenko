@@ -21,10 +21,13 @@ def coverage_context():
         yield
     cov.save()
     covered = cov.report()
-    print(f'Coverage is {covered}%')
+    print(f'Coverage is {covered}%\n')
 
     cov.html_report()
+    print(f'Coverage HTML was written to dir {cov.config.html_dir}\n')
+
     cov.xml_report()
+    print(f'Coverage XML was written to file {cov.config.xml_output}\n')
 
     fail_under = cov.config.get_option('report:fail_under')
     if covered < fail_under:
