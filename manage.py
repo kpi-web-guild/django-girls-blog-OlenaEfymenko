@@ -20,15 +20,22 @@ def coverage_context():
     with cov.collect():
         yield
     cov.save()
-    print(f'Coverage is {cov.report()}%')
-
     covered = cov.report()
-    fail_under = cov.config.get_option('report:fail_under')
-    if covered < fail_under:
-        raise SystemExit(2)
+    print(f'Coverage is {covered}%\n')
 
     cov.html_report()
+    print(f'Coverage HTML was written to dir {cov.config.html_dir}\n')
+
     cov.xml_report()
+    print(f'Coverage XML was written to file {cov.config.xml_output}\n')
+
+    fail_under = cov.config.get_option('report:fail_under')
+    if covered < fail_under:
+        print(
+            'Erroring out because the coverage level is lower '
+            f'than the mandatory of {fail_under !s}%...',
+        )
+        raise SystemExit(2)
 
 
 @contextmanager
