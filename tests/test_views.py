@@ -145,3 +145,112 @@ class ViewsTest(TestCase):
         self.assertRedirects(
             response, f'/accounts/login/?next={reverse("post_new")}',
         )
+
+    def test_post_edit_authorized_user(self):
+        """Ensure."""
+        login_successful = self.client.login(
+            username='test user', password='test password',
+        )
+        self.assertTrue(login_successful)
+        post = Post.objects.create(
+            author=self.user, title='test title', text='test text',
+        )
+
+        # GET response
+        get_response = self.client.get(
+            reverse('post_edit', kwargs={'pk': post.pk}),
+        )
+        self.assertEqual(200, get_response.status_code)
+        self.assertTemplateUsed(get_response, 'blog/post_edit.html')
+
+        # POST request with valid form data
+        valid_form_data = {
+            'title': 'edited test title',
+            'text': 'edited test text',
+        }
+        post_response_valid = self.client.post(
+            reverse('post_edit', kwargs={'pk': post.pk}),
+            valid_form_data, follow=True,
+        )
+        self.assertEqual(200, post_response_valid.status_code)
+        edited_post = Post.objects.get(pk=post.pk)
+        self.assertEqual(edited_post.title, 'edited test title')
+        self.assertEqual(edited_post.text, 'edited test text')
+
+        self.assertRedirects(
+            post_response_valid, reverse(
+            'post_detail', kwargs={'pk': post.pk},
+            ),
+        )
+        self.assertTemplateUsed(
+            post_response_valid,
+            'blog/post_detail.html',
+        )
+
+        # POST request with invalid form data
+        invalid_form_data = {
+            'title': '',
+            'text': 'edited test text',
+        }
+        post_response_invalid = self.client.post(
+            reverse('post_edit', kwargs={'pk': post.pk}),
+            data=invalid_form_data,
+        )
+        self.assertEqual(200, post_response_invalid.status_code)
+        self.assertTemplateUsed(post_response_invalid, 'blog/post_edit.html')
+        self.assertContains(
+            post_response_invalid,
+            'This field is required', count=1,
+        )
+        post.refresh_from_db()
+        self.assertEqual(post.title, 'edited test title')
+        self.assertEqual(post.text, 'edited test text')
+
+    def test_post_edit_unauthorized_user(self):
+        """Ensure."""
+        post = Post.objects.create(
+            author=self.user, title='test post', text='test text',
+        )
+        response = self.client.get(
+            reverse('post_edit', kwargs={'pk': post.pk}),
+        )
+        self.assertRedirects(
+            response,
+                f'/accounts/login/?next={reverse("post_edit", kwargs={"pk": post.pk})}',
+        )
+
+    def test_post_edit_successful(self):
+        """Ensure."""
+        login_successful = self.client.login(
+            username='test user', password='test password',
+        )
+        self.assertTrue(login_successful)
+
+        post = Post.objects.create(
+            author=self.user, title='test post', text='test text',
+        )
+        valid_form_data = {
+            'title': 'edited test title',
+            'text': 'edited test title',
+        }
+        post_response = self.client.post(
+            reverse(
+            'post_edit', kwargs={'pk': post.pk},
+            ), valid_form_data, follow=True,
+        )
+        self.assertEqual(post_response.status_code, 200)
+        post.refresh_from_db()
+        self.assertEqual(post.title, 'edited test title')
+        self.assertEqual(post.text, 'edited test title')
+
+    def test_post_edit_failed(self):
+        """Ensure."""
+        login_successful = self.client.login(
+            username='test user', password='test password',
+        )
+        self.assertTrue(login_successful)
+
+        http_response = self.client.get(
+            reverse('post_edit', kwargs={'pk': 33}),
+        )
+        self.assertEqual(404, http_response.status_code)
