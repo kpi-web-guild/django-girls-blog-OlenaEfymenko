@@ -96,29 +96,48 @@ class ViewsTest(TestCase):
             username='test user', password='test password',
         )
         self.assertTrue(login_successful)
+        # GET request
         get_response = self.client.get(reverse('post_new'))
         self.assertEqual(200, get_response.status_code)
         self.assertTemplateUsed(get_response, 'blog/post_edit.html')
 
-        form_post_data = {
+        # POST request with valid form data
+        valid_form_post_data = {
             'title': 'test title',
             'text': 'test text',
         }
-        post_response = self.client.post(
-            reverse('post_new'), form_post_data, follow=True,
+        post_response_valid = self.client.post(
+            reverse('post_new'), valid_form_post_data, follow=True,
         )
-        self.assertEqual(200, post_response.status_code)
+        self.assertEqual(200, post_response_valid.status_code)
         new_post = Post.objects.filter(
             title='test title', text='test text',
         ).first()
         self.assertIsNotNone(new_post)
 
         self.assertRedirects(
-            post_response, reverse(
+            post_response_valid, reverse(
                 'post_detail', kwargs={'pk': new_post.pk},
             ),
         )
-        self.assertTemplateUsed(get_response, 'blog/post_edit.html')
+        self.assertTemplateUsed(post_response_valid, 'blog/post_detail.html')
+
+        # POST request with invalid form data
+        invalid_form_data = {
+            'title': '',
+            'text': 'test text',
+        }
+        post_response_invalid = self.client.post(
+            reverse(
+                'post_new',
+            ), data=invalid_form_data, follow=True,
+        )
+        self.assertEqual(200, post_response_invalid.status_code)
+        self.assertTemplateUsed(post_response_invalid, 'blog/post_edit.html')
+        self.assertContains(
+            post_response_invalid,
+            'This field is required', count=1,
+        )
 
     def test_create_new_post_unauthorized_user(self):
         """Ensure the unauthorized user is redirected to the login page."""
