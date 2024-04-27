@@ -6,7 +6,7 @@ from .models import Post
 
 
 class PostForm(forms.ModelForm):
-    """Form for the creation of new posts in the Blog application."""
+    """Form for editing posts in the Blog application."""
 
     class Meta:
         """Metadata for the post form."""
