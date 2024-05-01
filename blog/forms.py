@@ -1,4 +1,4 @@
-"""Form class for the Blog application."""
+"""The forms for the Blog application."""
 
 from django import forms
 

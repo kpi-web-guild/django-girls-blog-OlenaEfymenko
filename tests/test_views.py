@@ -49,11 +49,11 @@ class ViewsTest(TestCase):
         }
 
     def login_user_helper(self):
-        """ADD."""
+        """Authenticate the test user."""
         self.client.force_login(self.user)
 
     def unauthorized_user_helper(self, url):
-        """ADD."""
+        """Check if unauthorized user is redirected to the login page."""
         http_response = self.client.get(url)
         self.assertRedirects(
             http_response, f'/accounts/login/?next={url}',
