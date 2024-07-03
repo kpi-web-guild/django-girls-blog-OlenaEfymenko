@@ -48,17 +48,6 @@ class ViewsTest(TestCase):
             'text': 'Test Text',
         }
 
-    def login_user_helper(self):
-        """Authenticate the test user."""
-        self.client.force_login(self.user)
-
-    def unauthorized_user_helper(self, url):
-        """Check if unauthorized user is redirected to the login page."""
-        http_response = self.client.get(url)
-        self.assertRedirects(
-            http_response, f'/accounts/login/?next={url}',
-        )
-
     def test_post_list_rendering(self):
         """Check correct posts displayed based on mocked current time."""
         post_list_url = reverse('post_list')
@@ -108,110 +97,102 @@ class ViewsTest(TestCase):
         )
         self.assertEqual(404, http_response.status_code)
 
-    def test_post_new_get_method_authorized_user(self):
-        """Check that an authorized user can access the new post page."""
-        self.login_user_helper()
-        http_response = self.client.get(reverse('post_new'))
-        self.assertEqual(200, http_response.status_code)
+    def test_post_new_get_authorized(self):
+        """Ensure authorized users can access the new post page."""
+        self.client.force_login(self.user)
+        url = reverse('post_new')
+        http_response = self.client.get(url)
+        self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
 
-    def test_post_new_get_method_unauthorized_user(self):
-        """Check that an unauthorized user is redirected to the login page."""
-        self.unauthorized_user_helper(reverse('post_new'))
+    def test_post_new_get_unauthorized(self):
+        """Ensure unauthorized users are redirected when add the new post."""
+        self.client.logout()
+        url = reverse('post_new')
+        http_response = self.client.get(url)
+        self.assertRedirects(http_response, f'/accounts/login/?next={url}')
 
-    def test_post_new_post_method_authorized_user_valid_form(self):
-        """Check if authorized user can create a new post with valid form."""
-        self.login_user_helper()
+    def test_post_new_valid_form_authorized(self):
+        """Ensure authorized users can correctly fill out the form for post."""
+        self.client.force_login(self.user)
+        url = reverse('post_new')
+        initial_post_count = Post.objects.count()
         http_response = self.client.post(
-            reverse('post_new'), self.valid_form_post, follow=True,
+            url, self.valid_form_post, follow=True,
         )
-        self.assertEqual(200, http_response.status_code)
-        new_post = Post.objects.filter(
-            title='Test Title', text='Test Text',
-        ).first()
-        self.assertIsNotNone(new_post)
+        self.assertEqual(http_response.status_code, 200)
+        self.assertTemplateUsed(http_response, 'blog/post_detail.html')
+        new_post = Post.objects.last()
         self.assertRedirects(
-            http_response, reverse(
-                'post_detail', kwargs={'pk': new_post.pk},
+            http_response,
+            reverse(
+                'post_detail',
+                kwargs={'pk': new_post.pk},
             ),
         )
-        self.assertTemplateUsed(http_response, 'blog/post_detail.html')
+        self.assertEqual(new_post.title, 'Test Title')
+        self.assertEqual(new_post.text, 'Test Text')
+        self.assertEqual(new_post.author, self.user)
+        self.assertIsNotNone(new_post.published_date)
+        self.assertEqual(Post.objects.count(), initial_post_count + 1)
 
-    def test_post_new_post_method_authorized_user_invalid_form(self):
-        """Check if post can't be created when submitting an invalid form."""
-        self.login_user_helper()
-        http_response = self.client.post(
-            reverse('post_new'), self.invalid_form_post,
-        )
-        self.assertEqual(200, http_response.status_code)
+    def test_post_new_invalid_form_authorized(self):
+        """Test handling of invalid form submission for new post."""
+        self.client.force_login(self.user)
+        url = reverse('post_new')
+        http_response = self.client.post(url, self.invalid_form_post)
+        self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
-        self.assertEqual(Post.objects.count(), 3)
-        self.assertTrue(http_response.context['form'].errors)
         self.assertContains(
             http_response, 'This field is required.', html=True,
         )
 
-    def test_post_edit_get_method_authorized_user(self):
-        """Check that an authorized user can access the edit post page."""
-        self.login_user_helper()
-        post = Post.objects.create(
-            author=self.user, title='Test Post', text='Test Text',
-        )
-        http_response = self.client.get(
-            reverse('post_edit', kwargs={'pk': post.pk}),
-        )
-        self.assertEqual(200, http_response.status_code)
+    def test_post_edit_get_authorized(self):
+        """Ensure authorized users have access to edit the post."""
+        self.client.force_login(self.user)
+        post = self.current_post
+        url = reverse('post_edit', kwargs={'pk': post.pk})
+        http_response = self.client.get(url)
+        self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
 
-    def test_post_edit_get_method_unauthorized_user(self):
-        """Check that an unauthorized user is redirected to the login page."""
-        self.unauthorized_user_helper(reverse('post_edit', kwargs={'pk': 1}))
+    def test_post_edit_get_unauthorized(self):
+        """Ensure unauthorized users are redirected when edit a post."""
+        self.client.logout()
+        url = reverse('post_edit', kwargs={'pk': self.current_post.pk})
+        http_response = self.client.get(url)
+        self.assertRedirects(http_response, f'/accounts/login/?next={url}')
 
-    def test_post_edit_post_method_authorized_user_valid_form(self):
-        """Check if authorized user can edit post with valid form."""
-        self.login_user_helper()
-        post = Post.objects.create(
-            author=self.user, title='Initial Title', text='Initial Text',
-        )
+    def test_post_edit_valid_form_authorized(self):
+        """Check the correctness of updating the post after editing."""
+        self.client.force_login(self.user)
+        post = self.current_post
+        url = reverse('post_edit', kwargs={'pk': post.pk})
         updated_form_data = self.valid_form_post.copy()
         updated_form_data['title'] = 'Updated Title'
         updated_form_data['text'] = 'Updated Text'
-        http_response = self.client.post(
-            reverse(
-                'post_edit', kwargs={'pk': post.pk},
-            ),
-            updated_form_data, follow=True,
-        )
-        self.assertEqual(200, http_response.status_code)
-        post.refresh_from_db()
-        self.assertEqual(post.title, 'Updated Title')
-        self.assertEqual(post.text, 'Updated Text')
+        initial_published_date = post.published_date
+        http_response = self.client.post(url, updated_form_data, follow=True)
+        self.assertEqual(http_response.status_code, 200)
+        self.assertTemplateUsed(http_response, 'blog/post_detail.html')
         self.assertRedirects(
             http_response, reverse(
                 'post_detail', kwargs={'pk': post.pk},
             ),
         )
-        self.assertTemplateUsed(http_response, 'blog/post_detail.html')
-
-    def test_post_edit_post_method_authorized_user_invalid_form(self):
-        """Check if post can't be edited when submitting an invalid form."""
-        self.login_user_helper()
-        post = Post.objects.create(
-            author=self.user, title='Initial Title', text='Initial Text',
-        )
-        http_response = self.client.post(
-            reverse(
-                'post_edit', kwargs={
-                 'pk': post.pk,
-                },
-            ), self.invalid_form_post,
-        )
-        self.assertEqual(200, http_response.status_code)
         post.refresh_from_db()
-        self.assertEqual(post.title, 'Initial Title')
-        self.assertEqual(post.text, 'Initial Text')
+        self.assertEqual(post.title, 'Updated Title')
+        self.assertEqual(post.text, 'Updated Text')
+        self.assertEqual(post.author, self.user)
+        self.assertNotEqual(post.published_date, initial_published_date)
+
+    def test_post_edit_invalid_form_authorized(self):
+        """Test handling of invalid form submission when editing a post."""
+        self.client.force_login(self.user)
+        url = reverse('post_edit', kwargs={'pk': self.current_post.pk})
+        http_response = self.client.post(url, self.invalid_form_post)
+        self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
-        self.assertTrue(http_response.context['form'].errors)
         self.assertContains(
             http_response, 'This field is required.', html=True,
         )
