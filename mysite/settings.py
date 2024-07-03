@@ -52,6 +52,8 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
+            # pylint: disable-next=fixme
+            'debug': True,  # FIXME: Only enable this during testing
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
