@@ -12,5 +12,4 @@ urlpatterns = [
         name='logout',
     ),
     path('', include('blog.urls')),
-
 ]
