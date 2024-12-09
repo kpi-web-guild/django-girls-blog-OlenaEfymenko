@@ -4,11 +4,11 @@
 #
 #    pip-compile requirements/base.in
 #
-asgiref==3.7.2
+asgiref==3.8.1
     # via django
-django==3.2.21
-    # via -r base.in
-pytz==2023.3.post1
+django==3.2.25
+    # via -r requirements/base.in
+pytz==2024.2
     # via django
-sqlparse==0.4.4
+sqlparse==0.5.2
     # via django
