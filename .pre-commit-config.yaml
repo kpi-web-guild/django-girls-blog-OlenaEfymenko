@@ -2,7 +2,7 @@
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v5.0.0
   hooks:
   - id: end-of-file-fixer
   - id: trailing-whitespace
@@ -21,37 +21,38 @@ repos:
   - id: debug-statements
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.0.1
+  rev: v1.14.1
   hooks:
   - id: mypy
 
 - repo: https://github.com/asottile/add-trailing-comma
-  rev: v2.4.0
+  rev: v3.1.0
   hooks:
   - id: add-trailing-comma
 
 - repo: https://github.com/Lucas-C/pre-commit-hooks
-  rev: v1.4.2
+  rev: v1.5.5
   hooks:
   - id: remove-tabs
 
 - repo: https://github.com/pycqa/isort
-  rev: 5.12.0
+  rev: 5.13.2
   hooks:
   - id: isort
 
 - repo: https://github.com/PyCQA/pylint
-  rev: v2.16.3
+  rev: v3.3.3
   hooks:
   - id: pylint
     args:
     - --django-settings-module=mysite.settings
     additional_dependencies:
     - coverage
-    - pylint_django[with_django] >= 2.5.3
+    - django==3.2.25
+    - pylint-django >= 2.6.1
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 6.1.0
+  rev: 7.1.1
   hooks:
   - id: flake8
     additional_dependencies:
@@ -59,7 +60,7 @@ repos:
     - flake8-docstrings == 1.7.0
 
 - repo: https://github.com/adrienverge/yamllint.git
-  rev: v1.32.0
+  rev: v1.33.0
   hooks:
   - id: yamllint
     args:
