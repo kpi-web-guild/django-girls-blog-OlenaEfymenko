@@ -143,8 +143,8 @@ class ViewsTest(TestCase):
         http_response = self.client.post(url, self.invalid_form_post)
         self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
-        self.assertContains(
-            http_response, 'This field is required.', html=True,
+        self.assertFormError(
+            http_response.context['form'], 'title', 'This field is required.',
         )
 
     def test_post_edit_get_authorized(self):
@@ -193,6 +193,6 @@ class ViewsTest(TestCase):
         http_response = self.client.post(url, self.invalid_form_post)
         self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
-        self.assertContains(
-            http_response, 'This field is required.', html=True,
+        self.assertFormError(
+            http_response.context['form'], 'title', 'This field is required.',
         )
