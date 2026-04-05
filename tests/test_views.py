@@ -130,8 +130,8 @@ class ViewsTest(TestCase):
                 kwargs={'pk': new_post.pk},
             ),
         )
-        self.assertEqual(new_post.title, 'Test Title')
-        self.assertEqual(new_post.text, 'Test Text')
+        self.assertEqual(new_post.title, self.valid_form_post['title'])
+        self.assertEqual(new_post.text, self.valid_form_post['text'])
         self.assertEqual(new_post.author, self.user)
         self.assertIsNotNone(new_post.published_date)
         self.assertEqual(Post.objects.count(), initial_post_count + 1)
