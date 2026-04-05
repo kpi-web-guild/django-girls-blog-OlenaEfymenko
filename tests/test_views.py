@@ -137,7 +137,7 @@ class ViewsTest(TestCase):
         self.assertEqual(Post.objects.count(), initial_post_count + 1)
 
     def test_post_new_invalid_form_authorized(self):
-        """Test handling of invalid form submission for new post."""
+        """Ensure an invalid new post is not saved and the form is shown with errors."""
         self.client.force_login(self.user)
         url = reverse('post_new')
         http_response = self.client.post(url, self.invalid_form_post)
@@ -164,7 +164,7 @@ class ViewsTest(TestCase):
         self.assertRedirects(http_response, f'/accounts/login/?next={url}')
 
     def test_post_edit_valid_form_authorized(self):
-        """Check the correctness of updating the post after editing."""
+        """Ensure authorized users can successfully edit and save a post."""
         self.client.force_login(self.user)
         post = self.current_post
         url = reverse('post_edit', kwargs={'pk': post.pk})
@@ -191,7 +191,7 @@ class ViewsTest(TestCase):
         self.assertEqual(post.published_date, frozen_time)
 
     def test_post_edit_invalid_form_authorized(self):
-        """Test handling of invalid form submission when editing a post."""
+        """Ensure an invalid post edit is not saved and the form is shown with errors."""
         self.client.force_login(self.user)
         url = reverse('post_edit', kwargs={'pk': self.current_post.pk})
         http_response = self.client.post(url, self.invalid_form_post)
