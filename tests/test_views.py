@@ -137,14 +137,14 @@ class ViewsTest(TestCase):
         self.assertEqual(Post.objects.count(), initial_post_count + 1)
 
     def test_post_new_invalid_form_authorized(self):
-        """Ensure an invalid new post is not saved and the form is shown with errors."""
+        """Ensure an invalid new post is not saved and shows form errors."""
         self.client.force_login(self.user)
         url = reverse('post_new')
         http_response = self.client.post(url, self.invalid_form_post)
         self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
         self.assertFormError(
-            http_response.context['form'], 'title', 'This field is required.',
+            http_response, 'form', 'title', 'This field is required.',
         )
 
     def test_post_edit_get_authorized(self):
@@ -176,7 +176,9 @@ class ViewsTest(TestCase):
             'django.utils.timezone.now',
             Mock(return_value=frozen_time),
         ):
-            http_response = self.client.post(url, updated_form_data, follow=True)
+            http_response = self.client.post(
+                url, updated_form_data, follow=True,
+            )
         self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_detail.html')
         self.assertRedirects(
@@ -191,12 +193,12 @@ class ViewsTest(TestCase):
         self.assertEqual(post.published_date, frozen_time)
 
     def test_post_edit_invalid_form_authorized(self):
-        """Ensure an invalid post edit is not saved and the form is shown with errors."""
+        """Ensure an invalid post edit is not saved and shows form errors."""
         self.client.force_login(self.user)
         url = reverse('post_edit', kwargs={'pk': self.current_post.pk})
         http_response = self.client.post(url, self.invalid_form_post)
         self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_edit.html')
         self.assertFormError(
-            http_response.context['form'], 'title', 'This field is required.',
+            http_response, 'form', 'title', 'This field is required.',
         )
