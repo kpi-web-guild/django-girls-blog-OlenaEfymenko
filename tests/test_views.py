@@ -171,8 +171,12 @@ class ViewsTest(TestCase):
         updated_form_data = self.valid_form_post.copy()
         updated_form_data['title'] = 'Updated Title'
         updated_form_data['text'] = 'Updated Text'
-        initial_published_date = post.published_date
-        http_response = self.client.post(url, updated_form_data, follow=True)
+        frozen_time = datetime(2024, 6, 1, tzinfo=self.tm_zone)
+        with patch(
+            'django.utils.timezone.now',
+            Mock(return_value=frozen_time),
+        ):
+            http_response = self.client.post(url, updated_form_data, follow=True)
         self.assertEqual(http_response.status_code, 200)
         self.assertTemplateUsed(http_response, 'blog/post_detail.html')
         self.assertRedirects(
@@ -184,7 +188,7 @@ class ViewsTest(TestCase):
         self.assertEqual(post.title, 'Updated Title')
         self.assertEqual(post.text, 'Updated Text')
         self.assertEqual(post.author, self.user)
-        self.assertNotEqual(post.published_date, initial_published_date)
+        self.assertEqual(post.published_date, frozen_time)
 
     def test_post_edit_invalid_form_authorized(self):
         """Test handling of invalid form submission when editing a post."""
