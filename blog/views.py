@@ -44,13 +44,12 @@ def post_new(request):
 def post_edit(request, pk):
     """Edit an existing post."""
     post = get_object_or_404(Post, pk=pk)
+    if post.author != request.user:
+        return redirect('post_detail', pk=post.pk)
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
+            post = form.save()
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
