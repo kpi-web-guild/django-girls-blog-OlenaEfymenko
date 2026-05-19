@@ -202,3 +202,21 @@ class ViewsTest(TestCase):
         self.assertFormError(
             http_response, 'form', 'title', 'This field is required.',
         )
+
+    def test_post_edit_forbidden_for_non_author(self):
+        """Ensure a logged-in user cannot edit someone else's post."""
+        other_user = get_user_model().objects.create(username='intruder')
+        self.client.force_login(other_user)
+        url = reverse('post_edit', kwargs={'pk': self.current_post.pk})
+
+        get_response = self.client.get(url)
+        self.assertEqual(get_response.status_code, 403)
+
+        original_title = self.current_post.title
+        original_text = self.current_post.text
+        post_response = self.client.post(url, self.valid_form_post)
+        self.assertEqual(post_response.status_code, 403)
+        self.current_post.refresh_from_db()
+        self.assertEqual(self.current_post.title, original_title)
+        self.assertEqual(self.current_post.text, original_text)
+        self.assertEqual(self.current_post.author, self.user)

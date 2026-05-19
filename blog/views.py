@@ -1,6 +1,7 @@
 """The views for the Blog application."""
 
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -45,7 +46,7 @@ def post_edit(request, pk):
     """Edit an existing post."""
     post = get_object_or_404(Post, pk=pk)
     if post.author != request.user:
-        return redirect('post_detail', pk=post.pk)
+        return HttpResponseForbidden('You can only edit your own post.')
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
